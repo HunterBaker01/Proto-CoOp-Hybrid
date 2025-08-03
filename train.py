@@ -69,3 +69,36 @@ def train_coop(
     }
 
     return coop_model, learned_ctx, training_config
+
+
+def get_text_features_with_learned_prompt(
+    class_indices, learned_ctx, training_config, device="cuda"
+):
+    """
+    Generate text features for a given set of classes using the learned context vectors.
+    Needed in order to have a tokenized prompt for the novel classes (never sees or trains
+    on the novel classes)
+    """
+    classnames = [CLASS_NAMES[i] for i in class_indices]
+
+    # Create a temporary model with the same configuration as training to ensure consistency
+    temp_model = OurCLIP(
+        classnames,
+        training_config["n_ctx"],
+        training_config["ctx_init"],
+        training_config["class_token_position"],
+    ).to(device)
+
+    # Load the learned context vectors into this model
+    with torch.no_grad():
+        temp_model.prompt_learner.ctx.copy_(learned_ctx)
+
+    # Generate and normalize text features
+    temp_model.eval()
+    with torch.no_grad():
+        prompts = temp_model.prompt_learner()
+        tokenized_prompts = temp_model.tokenized_prompts
+        text_features = temp_model.text_encoder(prompts, tokenized_prompts)
+        text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+
+    return text_features
