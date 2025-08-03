@@ -1,3 +1,11 @@
+import torch
+import tqdm
+import functional as F
+import pandas as pd
+import numpy as np
+from sklearn.metrics import accuracy_score
+
+
 def evaluate(
     test_loader,
     class_indices,
@@ -5,6 +13,8 @@ def evaluate(
     proto_weights=None,
     alpha=0.55,
     conf_threshold=0.98,
+    device="cuda" if torch.cuda.is_available() else "cpu",
+    model=None,
 ):
     """Evaluate the model on test data using the confidence-based proto-adapter switching mechanism."""
     all_preds = []
@@ -109,18 +119,6 @@ def single_experiment(ctx, alpha, conf_threshold, lr, epochs, batch_size=16):
         base_proto_weights,
         alpha=alpha,
         conf_threshold=conf_threshold,
-    )
-
-    # Plot the threshold usage
-    print("\nVisualizing model usage distribution...")
-    plot_dir = "plots"
-    os.makedirs(plot_dir, exist_ok=True)
-    filename = (
-        f"dist_ctx-{ctx}_alpha-{alpha}_conf-{conf_threshold}_lr-{lr}_ep-{epochs}.png"
-    )
-    save_path = os.path.join(plot_dir, filename)
-    plot_model_usage_histogram(
-        base_confidences, novel_confidences, conf_threshold, save_path=save_path
     )
 
     return base_acc, novel_acc
