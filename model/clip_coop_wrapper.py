@@ -108,3 +108,37 @@ class PromptLearner(nn.Module):
             dim=1,
         )
         return prompts
+
+
+class OurCLIP(nn.Module):
+    """The main model class that integrates the PromptLearner with CLIP."""
+
+    def __init__(self, classnames, n_ctx, ctx_init, class_token_position, csc=False):
+        super().__init__()
+        clip_model, _ = clip.load("ViT-B/16")
+        clip_model = clip_model.float()
+
+        self.prompt_learner = PromptLearner(
+            clip_model, classnames, n_ctx, ctx_init, class_token_position, csc=csc
+        )
+        self.tokenized_prompts = self.prompt_learner.tokenized_prompts
+        self.image_encoder = clip_model.visual
+        self.text_encoder = TextEncoder(clip_model)
+        self.logit_scale = clip_model.logit_scale
+
+    def forward(self, image):
+        image_features = self.image_encoder(image)
+
+        prompts = self.prompt_learner()
+        tokenized_prompts = self.tokenized_prompts
+        text_features = self.text_encoder(prompts, tokenized_prompts)
+
+        # Normalize features to compute cosine similarity
+        image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+        text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+
+        # Compute logits
+        logit_scale = self.logit_scale.exp()
+        logits = logit_scale * image_features @ text_features.t()
+
+        return logits
