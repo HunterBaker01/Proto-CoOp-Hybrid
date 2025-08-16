@@ -115,7 +115,7 @@ class OurCLIP(nn.Module):
 
     def __init__(self, classnames, n_ctx, ctx_init, class_token_position, csc=False):
         super().__init__()
-        clip_model, _ = clip.load("ViT-B/16")
+        clip_model, preprocess = clip.load("ViT-B/16")
         clip_model = clip_model.float()
 
         self.prompt_learner = PromptLearner(

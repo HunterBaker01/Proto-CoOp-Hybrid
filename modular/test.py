@@ -1,10 +1,15 @@
 import torch
 import tqdm
-import functional as F
+import torch.nn.functional as F
 import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score
+from data_processing import get_data, base_novel_categories, split_data
+from model.clip_coop_wrapper import OurCLIP
 
+clip_wrapper = OurCLIP()
+model = clip_wrapper.model
+preprocess = clip_wrapper.preprocess
 
 def evaluate(
     test_loader,
@@ -14,7 +19,7 @@ def evaluate(
     alpha=0.55,
     conf_threshold=0.98,
     device="cuda" if torch.cuda.is_available() else "cpu",
-    model=None,
+    model=model,
 ):
     """Evaluate the model on test data using the confidence-based proto-adapter switching mechanism."""
     all_preds = []
