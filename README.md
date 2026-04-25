@@ -36,8 +36,8 @@ The winner is the configuration with the highest **harmonic mean of base and nov
 ## Setup
 
 ```bash
-git clone https://github.com/HunterBaker01/proto_coop_hybrid.git
-cd proto_coop_hybrid
+git clone https://github.com/HunterBaker01/Proto-CoOp-Hybrid.git
+cd Proto-CoOp-Hybrid
 pip install -r requirements.txt
 ```
 
