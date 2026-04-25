@@ -61,8 +61,6 @@ proto_coop_hybrid.ipynb   # full pipeline + report
 requirements.txt          # pinned dependency ranges
 ```
 
-A modular Python-package version is planned but not yet checked in.
-
 ## References
 
 1. K. Zhou, J. Yang, C. C. Loy, Z. Liu. *Learning to Prompt for Vision-Language Models.* IJCV 2022. [arXiv:2109.01134](https://arxiv.org/abs/2109.01134)
