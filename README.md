@@ -2,7 +2,7 @@
 
 A hybrid few-shot classifier built on a frozen CLIP ViT-B/16 backbone. It combines [CoOp](https://arxiv.org/abs/2109.01134) (Context Optimization — learnable prompt vectors) with a training-free [proto-adapter](https://arxiv.org/abs/2111.03930) (mean-feature class prototypes), and routes between them at inference time using a confidence-based switch. The goal is to specialize on seen classes without giving up CLIP's zero-shot generalization to unseen ones.
 
-Originally built as a deep-learning course project with **Christian Li Sivertsen** and now being polished and extended.
+Originally built as a deep-learning course project with **Christian Li Sivertsen**, instructions how to run below for reproducibilty.
 
 ## Results
 
@@ -51,8 +51,6 @@ Open `proto_coop_hybrid.ipynb` and execute top-to-bottom. The notebook will:
 2. Load CLIP ViT-B/16 (downloaded automatically on first run).
 3. Run the two-stage hyperparameter search and the final multi-seed evaluation.
 4. Persist per-run summaries to `plots/`.
-
-To override defaults (e.g. number of Stage-1 draws, seed list, alpha/conf grids), edit the call to `run_experiments(...)` in the runner cell.
 
 ## Repository layout
 
